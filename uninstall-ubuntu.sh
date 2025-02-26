@@ -13,21 +13,35 @@ sudo apt remove --purge '*xfce*' '*xorg*' '*lightdm*' '*chrome*' '*gui*' -y
 echo "Removing manually installed GUI applications..."
 sudo apt remove --purge '*gnome*' '*kde*' '*lxde*' '*mate*' '*i3*' '*wayland*' '*hivello*' -y
 
-echo "Removing flatpak and snap packages..."
-sudo snap list | awk 'NR>1 {print $1}' | xargs -I {} sudo snap remove {}
+echo "Uninstalling Snap and Flatpak applications..."
+# Remove all Snap apps including Hivello
+sudo snap remove --purge $(snap list | awk 'NR>1 {print $1}')
+sudo apt remove --purge snapd -y
+sudo rm -rf ~/snap /var/cache/snapd /var/lib/snapd
+
+# Remove all Flatpak apps
 flatpak uninstall --delete-data -y --noninteractive
+sudo apt remove --purge flatpak -y
+sudo rm -rf ~/.var/app /var/lib/flatpak
 
 echo "Cleaning up unneeded dependencies..."
 sudo apt autoremove -y
 sudo apt clean
 
+echo "Removing all non-root users..."
+for user in $(ls /home); do
+    echo "Deleting user: $user"
+    sudo deluser --remove-home $user
+done
+
+echo "Resetting system settings..."
+sudo rm -rf /etc/skel/.config /etc/skel/.local /home/*/.config /home/*/.local
+
 echo "Disabling GUI startup..."
 sudo systemctl set-default multi-user.target
 
-echo "Removing the RDP user..."
-read -p "Enter the username you created for RDP: " rdp_user
-sudo deluser --remove-home $rdp_user
-echo "User $rdp_user has been removed."
+echo "Final cleanup before reboot..."
+sudo rm -rf /tmp/* /var/tmp/*
 
 echo "Uninstallation complete! Rebooting to apply changes..."
 sudo reboot
