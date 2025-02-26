@@ -29,9 +29,11 @@ sudo apt autoremove -y
 sudo apt clean
 
 echo "Removing all non-root users..."
-for user in $(ls /home); do
-    echo "Deleting user: $user"
-    sudo deluser --remove-home $user
+for user in $(awk -F: '$3 >= 1000 {print $1}' /etc/passwd); do
+    if [[ "$user" != "root" ]]; then
+        echo "Deleting user: $user"
+        sudo deluser --remove-home $user
+    fi
 done
 
 echo "Resetting system settings..."
