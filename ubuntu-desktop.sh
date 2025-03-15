@@ -1,3 +1,5 @@
+Version fixing user double login
+
 #!/bin/bash
 
 # Disclaimer
@@ -16,6 +18,7 @@ read -p "Do you agree to proceed? (y/n): " AGREEMENT
 # Check user input
 if [[ "$AGREEMENT" != "y" ]]; then
     echo "You have declined the agreement. Exiting script."
+    echo "Installation aborted. You can rerun the script anytime to proceed."
     exit 1
 fi
 
@@ -42,8 +45,21 @@ sudo ufw enable -y
 
 echo "Creating a new user for RDP login..."
 read -p "Enter a new username for RDP: " new_user
-sudo adduser $new_user
-sudo passwd $new_user
+sudo useradd -m -s /bin/bash $new_user
+
+# Ensure password confirmation matches before proceeding
+while true; do
+    read -s -p "Enter a password for $new_user: " password
+    echo
+    read -s -p "Retype the password: " password_confirm
+    echo
+    if [[ "$password" == "$password_confirm" ]]; then
+        echo "$new_user:$password" | sudo chpasswd
+        break
+    else
+        echo "Passwords do not match. Please try again."
+    fi
+done
 
 echo "Granting the new user sudo privileges..."
 sudo usermod -aG sudo $new_user
