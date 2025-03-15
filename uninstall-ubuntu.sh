@@ -16,6 +16,17 @@ read -p "Do you agree to proceed? (y/n): " AGREEMENT
 # Check user input
 if [[ "$AGREEMENT" != "y" ]]; then
     echo "You have declined the agreement. Exiting script."
+    
+    # Prompt to delete the script file
+    read -p "Do you want to delete the downloaded script file (uninstall-ubuntu.sh)? (y/n): " DELETE_FILE
+    if [[ "$DELETE_FILE" == "y" ]]; then
+        SCRIPT_PATH="$(realpath "$0")"
+        rm -- "$SCRIPT_PATH"
+        echo "Script file deleted."
+    else
+        echo "Script file retained."
+    fi
+    
     exit 1
 fi
 
@@ -67,6 +78,17 @@ echo "Final cleanup before reboot..."
 sudo rm -rf /tmp/* /var/tmp/*
 
 echo "Uninstallation complete!"
+
+# Prompt to delete the script file before rebooting
+read -p "Do you want to delete the downloaded script file (uninstall-ubuntu.sh)? (y/n): " DELETE_FILE
+if [[ "$DELETE_FILE" == "y" ]]; then
+    SCRIPT_PATH="$(realpath "$0")"
+    rm -- "$SCRIPT_PATH"
+    echo "Script file deleted."
+else
+    echo "Script file retained."
+fi
+
 read -p "Do you want to reboot now? (y/N): " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
     echo "Rebooting..."
@@ -74,4 +96,3 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
 else
     echo "Reboot skipped. You may need to manually reboot for changes to take effect."
 fi
-
