@@ -1,5 +1,3 @@
-Version fixing user double login
-
 #!/bin/bash
 
 # Disclaimer
@@ -85,3 +83,12 @@ echo "Use the following credentials:"
 echo "Username: $new_user"
 echo "Password: (You set this during installation)"
 echo "RDP Address: Use your VPS IP address."
+
+# Prompt to delete the script file
+read -p "Do you want to delete the downloaded script file (ubuntu-desktop.sh)? (y/n): " DELETE_FILE
+if [[ "$DELETE_FILE" == "y" ]]; then
+    rm -- "$0"
+    echo "Script file deleted."
+else
+    echo "Script file retained."
+fi
