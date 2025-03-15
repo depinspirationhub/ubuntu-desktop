@@ -66,5 +66,12 @@ sudo systemctl set-default multi-user.target
 echo "Final cleanup before reboot..."
 sudo rm -rf /tmp/* /var/tmp/*
 
-echo "Uninstallation complete! Rebooting to apply changes..."
-sudo reboot
+echo "Uninstallation complete!"
+read -p "Do you want to reboot now? (y/N): " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+    echo "Rebooting..."
+    sudo reboot
+else
+    echo "Reboot skipped. You may need to manually reboot for changes to take effect."
+fi
+
