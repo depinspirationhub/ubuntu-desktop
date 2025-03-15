@@ -17,6 +17,17 @@ read -p "Do you agree to proceed? (y/n): " AGREEMENT
 if [[ "$AGREEMENT" != "y" ]]; then
     echo "You have declined the agreement. Exiting script."
     echo "Installation aborted. You can rerun the script anytime to proceed."
+    
+    # Prompt to delete the script file
+    read -p "Do you want to delete the downloaded script file (ubuntu-desktop.sh)? (y/n): " DELETE_FILE
+    if [[ "$DELETE_FILE" == "y" ]]; then
+        SCRIPT_PATH="$(realpath "$0")"
+        rm -- "$SCRIPT_PATH"
+        echo "Script file deleted."
+    else
+        echo "Script file retained."
+    fi
+    
     exit 1
 fi
 
@@ -87,7 +98,8 @@ echo "RDP Address: Use your VPS IP address."
 # Prompt to delete the script file
 read -p "Do you want to delete the downloaded script file (ubuntu-desktop.sh)? (y/n): " DELETE_FILE
 if [[ "$DELETE_FILE" == "y" ]]; then
-    rm -- "$0"
+    SCRIPT_PATH="$(realpath "$0")"
+    rm -- "$SCRIPT_PATH"
     echo "Script file deleted."
 else
     echo "Script file retained."
